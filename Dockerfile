@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
     && rm google-chrome.deb \
-    # Create a symlink for the Chrome binary only if it doesn't already exist
+    # Create a symlink for the Chrome binary if needed
     && if [ ! -e /usr/bin/google-chrome ]; then \
     ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome; \
     fi
@@ -33,10 +33,11 @@ RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrom
 # (Optional Debug Step: Verify Chrome is installed)
 RUN which google-chrome && google-chrome --version
 
-# Install ChromeDriver matching the installed Chrome version
+# Install ChromeDriver with closest matching version
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
-    && echo "Detected Chrome version: $CHROME_VERSION" \
-    && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") \
+    && CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f 1) \
+    && echo "Detected Chrome version: $CHROME_VERSION (Major: $CHROME_MAJOR_VERSION)" \
+    && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION") \
     && echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION" \
     && wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" \
     && unzip chromedriver_linux64.zip \
