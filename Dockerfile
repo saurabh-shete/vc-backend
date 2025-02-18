@@ -23,8 +23,14 @@ RUN apt-get update && apt-get install -y \
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
     && rm google-chrome.deb \
-    # Create a symlink so that the chrome binary is available as "google-chrome"
-    && ln -s /opt/google/chrome/google-chrome /usr/bin/google-chrome
+    # Create a symlink for the Chrome binary.
+    && if [ -f /opt/google/chrome/google-chrome ]; then \
+    ln -s /opt/google/chrome/google-chrome /usr/bin/google-chrome; \
+    elif [ -f /usr/bin/google-chrome-stable ]; then \
+    ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome; \
+    else \
+    echo "Chrome binary not found" && exit 1; \
+    fi
 
 # (Optional Debug Step: Verify Chrome is installed)
 RUN which google-chrome && google-chrome --version
