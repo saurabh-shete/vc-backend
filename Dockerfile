@@ -19,10 +19,11 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome manually
+# Install Google Chrome manually and create a symlink
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
-    && rm google-chrome.deb
+    && rm google-chrome.deb \
+    && ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome
 
 # Install ChromeDriver manually
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
