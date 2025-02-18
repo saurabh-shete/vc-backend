@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     ca-certificates \
+    gnupg \
     libnss3 \
     libgconf-2-4 \
     libxss1 \
@@ -21,19 +22,18 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome version 113 (which has a matching ChromeDriver)
-RUN wget -q -O google-chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_113.0.5672.24-1_amd64.deb \
-    && dpkg -i google-chrome.deb || apt-get -fy install \
-    && rm google-chrome.deb \
-    && if [ ! -e /usr/bin/google-chrome ]; then \
-    ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome; \
-    fi
+# Download and install Google Chrome 113
+RUN wget -q -O chrome-linux64.zip "https://storage.googleapis.com/chrome-for-testing-public/113.0.5672.63/linux64/chrome-linux64.zip" \
+    && unzip chrome-linux64.zip \
+    && mv chrome-linux64 /opt/google/chrome \
+    && ln -s /opt/google/chrome/chrome /usr/bin/google-chrome \
+    && rm chrome-linux64.zip
 
 # (Optional Debug Step: Verify Chrome is installed)
 RUN which google-chrome && google-chrome --version
 
-# Install ChromeDriver 113 (matching Chrome 113)
-RUN wget -q "https://chromedriver.storage.googleapis.com/113.0.5672.24/chromedriver_linux64.zip" \
+# Download and install ChromeDriver 113 (matching Chrome 113)
+RUN wget -q "https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip" \
     && unzip chromedriver_linux64.zip \
     && mv chromedriver /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
