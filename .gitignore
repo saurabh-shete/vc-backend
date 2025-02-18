@@ -1,0 +1,73 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+*.env
+
+# Logs
+logs/
+*.log
+debug.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Python dependencies
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Migrations (if using Alembic)
+migrations/
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+
+# FastAPI-specific
+instance/
+config.json
+config.yaml
+
+# Google Gemini API Cache (if any)
+google_api_cache/
+
+# Database files
+*.sqlite3
+*.db
+
+# Build files
+dist/
+build/
+*.egg
+*.whl
+*.pyo
+*.pyd
+site-packages/
+
+# Local test files
+*.swp
+*.swo
+*.swn
+
+venv
+sample.py
