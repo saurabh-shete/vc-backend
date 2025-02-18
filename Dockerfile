@@ -19,14 +19,13 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Google Chrome, then create a symlink for compatibility
+# Install Google Chrome manually
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
-    && rm google-chrome.deb \
-    && ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome
+    && rm google-chrome.deb
 
-# Install ChromeDriver that matches the installed version of Google Chrome
-RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
+# Install ChromeDriver by using google-chrome-stable to extract the version
+RUN CHROME_VERSION=$(google-chrome-stable --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
     && CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION) \
     && wget -q https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip \
     && unzip chromedriver_linux64.zip \
@@ -37,14 +36,13 @@ RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\
 # Set environment variables
 ENV PATH="/usr/local/bin:${PATH}"
 
-# Set the working directory
+# Set work directory
 WORKDIR /app
 
-# Copy Python dependencies and install them
+# Copy files and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
 COPY . .
 
 # Start the FastAPI server using uvicorn
