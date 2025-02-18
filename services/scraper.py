@@ -9,8 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
-from app.utils.linkedin_utils.extract_by_selectors_utils import extract_title_by_class
-from app.utils.gemini_utils.agent import evaluate_profile_for_vc_json
+from utils.linkedin_utils.extract_by_selectors_utils import extract_title_by_class
+from utils.gemini_utils.agent import evaluate_profile_for_vc_json
 from dotenv import load_dotenv
 
 load_dotenv()

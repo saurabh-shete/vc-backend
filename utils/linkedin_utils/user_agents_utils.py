@@ -13,7 +13,7 @@
 
 # write it's equivalent in python
 import random
-import app.data.user_agents as user_agents
+import data.user_agents as user_agents
 
 
 def get_user_agent():
