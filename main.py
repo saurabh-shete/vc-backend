@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import linkedin
+from routers import linkedin
 
 from fastapi.middleware.cors import CORSMiddleware
 

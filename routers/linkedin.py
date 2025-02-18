@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.services.scraper import LinkedInScraper
+from services.scraper import LinkedInScraper
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/linkedin", tags=["LinkedIn Scraper"])
