@@ -21,7 +21,16 @@ RUN echo "Step 1: Installing system dependencies..." \
     xvfb \
     libvulkan1 \
     xdg-utils \
+    libatk-bridge2.0-0 \
+    libgbm-dev \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    xdg-utils  \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Download and install Google Chrome 133
 RUN echo "Step 2: Downloading Chrome 133..." \

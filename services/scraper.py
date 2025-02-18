@@ -24,9 +24,12 @@ class LinkedInScraper:
 
     def __init__(self, session_cookie: str = None):
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless")  # Run in headless mode (no UI)
-        options.add_argument("--disable-gpu")
+        options.add_argument("--headless")  # Ensure headless mode is enabled
         options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")  # Enable debugging
+        options.add_argument("--disable-software-rasterizer")
         service = Service("/usr/local/bin/chromedriver")
         self.driver = webdriver.Chrome(service=service, options=options)
         self.session_cookie = session_cookie
@@ -52,7 +55,6 @@ class LinkedInScraper:
         # Refresh to apply the cookie
         self.driver.refresh()
         time.sleep(1)
-        print("Logged in using session cookie")
 
     def login(self):
         """Logs into LinkedIn using Selenium."""
@@ -70,7 +72,6 @@ class LinkedInScraper:
 
             # Check if email verification is required
             if "checkpoint/challenge" in self.driver.current_url:
-                print("Verification required! Fetching code...")
                 code = self.get_verification_code()
                 if code:
                     self.driver.find_element(
@@ -79,7 +80,6 @@ class LinkedInScraper:
                     self.driver.find_element(By.ID, "email-pin-submit-button").click()
                     time.sleep(5)
 
-            print("Login successful")
             return True
         except Exception as e:
             print(f"Error during login: {e}")
@@ -195,7 +195,7 @@ class LinkedInScraper:
 
         # Only use the first 'limit' profile links
         profile_links = profile_links[:limit]
-        print(f"Found {len(profile_links)} profile links!")
+        # print(f"Found {len(profile_links)} profile links!")
 
         # Extract details from each profile page
         profiles = []
@@ -438,11 +438,11 @@ return education;
                     "education": education,
                 }
                 evaluation = await evaluate_profile_for_vc_json(profile_data)
-                print(evaluation)
+                # print(evaluation)
                 profile_data["evaluation"] = evaluation
 
                 profiles.append(profile_data)
-                print(f"Scraped: {name} ({location})")
+                # print(f"Scraped: {name} ({location})")
 
             except Exception as e:
                 print(f"Error scraping {profile_link}: {e}")
