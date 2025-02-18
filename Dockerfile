@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libu2f-udev \
     xvfb \
-    libvulkan1 \ 
+    libvulkan1 \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,13 +25,9 @@ RUN apt-get update && apt-get install -y \
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
     && rm google-chrome.deb \
-    # Create a symlink for the Chrome binary.
-    && if [ -f /opt/google/chrome/google-chrome ]; then \
-    ln -s /opt/google/chrome/google-chrome /usr/bin/google-chrome; \
-    elif [ -f /usr/bin/google-chrome-stable ]; then \
+    # Create a symlink for the Chrome binary only if it doesn't already exist
+    && if [ ! -e /usr/bin/google-chrome ]; then \
     ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome; \
-    else \
-    echo "Chrome binary not found" && exit 1; \
     fi
 
 # (Optional Debug Step: Verify Chrome is installed)
