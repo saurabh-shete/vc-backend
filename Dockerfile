@@ -25,7 +25,7 @@ RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrom
     && rm google-chrome.deb
 
 # (Optional Debug Step: Verify Chrome is installed)
-# RUN which google-chrome && google-chrome --version
+RUN which google-chrome && google-chrome --version
 
 # Install ChromeDriver matching the installed Chrome version
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
