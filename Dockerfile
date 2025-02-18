@@ -1,11 +1,11 @@
 # Start from a base image with Python 3.10
-FROM python:3.10
+FROM --platform=linux/amd64 python:3.10 AS build
 
 # Install system dependencies required for Chrome & ChromeDriver
 RUN echo "Step 1: Installing system dependencies..." \
     && apt-get update && apt-get install -y \
-    wget \
     unzip \
+    wget \
     curl \
     ca-certificates \
     gnupg \
@@ -26,49 +26,31 @@ RUN echo "Step 1: Installing system dependencies..." \
 # Download and install Google Chrome 133
 RUN echo "Step 2: Downloading Chrome 133..." \
     && wget -q -O chrome-linux64.zip "https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chrome-linux64.zip" \
-    && echo "Step 3: Extracting Chrome 133..." \
     && unzip chrome-linux64.zip \
-    && echo "Step 4: Moving Chrome to /opt/google/chrome..." \
-    && mv chrome-linux64 /opt/google/chrome \
-    && echo "Step 5: Creating symlink for Google Chrome..." \
+    && mkdir -p /opt/google/chrome \
+    && mv chrome-linux64/* /opt/google/chrome/ \
     && ln -s /opt/google/chrome/chrome /usr/bin/google-chrome \
-    && rm chrome-linux64.zip \
-    && echo "Step 6: Verifying Chrome installation..." \
-    && ls -l /opt/google/chrome \
-    && ls -l /usr/bin/google-chrome
+    && rm chrome-linux64.zip
 
-# Debugging: Verify Chrome installation
-RUN echo "Step 7: Checking Chrome version..." \
-    && which google-chrome \
-    && google-chrome --version
+# Verify Chrome installation
+RUN google-chrome --version
 
-# Download and install ChromeDriver 133 (matching Chrome 133)
-RUN echo "Step 8: Downloading ChromeDriver 133..." \
-    && wget -q "https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip" \
-    && echo "Step 9: Extracting ChromeDriver 133..." \
+# Download and install ChromeDriver 133
+RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip" \
     && unzip chromedriver-linux64.zip \
-    && echo "Step 10: Moving ChromeDriver to /usr/local/bin..." \
     && mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver \
     && chmod +x /usr/local/bin/chromedriver \
-    && rm -rf chromedriver-linux64.zip chromedriver-linux64 \
-    && echo "Step 11: Verifying ChromeDriver installation..." \
-    && ls -l /usr/local/bin/chromedriver
+    && rm -rf chromedriver-linux64.zip chromedriver-linux64
 
-# Debugging: Verify ChromeDriver installation
-RUN echo "Step 12: Checking ChromeDriver version..." \
-    && which chromedriver \
-    && chromedriver --version
-
-# Update PATH environment variable (if needed)
-ENV PATH="/usr/local/bin:${PATH}"
+# Verify ChromeDriver installation
+RUN chromedriver --version
 
 # Set the working directory
 WORKDIR /app
 
 # Copy the requirements file and install Python dependencies
 COPY requirements.txt .
-RUN echo "Step 13: Installing Python dependencies..." \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
