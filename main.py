@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from routers import linkedin
-
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = FastAPI(title="LinkedIn Scraper API")
 

@@ -11,9 +11,6 @@ from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 from utils.linkedin_utils.extract_by_selectors_utils import extract_title_by_class
 from utils.gemini_utils.agent import evaluate_profile_for_vc_json
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Load credentials
 LINKEDIN_EMAIL = os.getenv("LINKEDIN_EMAIL")
