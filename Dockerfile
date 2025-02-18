@@ -19,10 +19,12 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome manually
+# Download and install Google Chrome
 RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome.deb || apt-get -fy install \
-    && rm google-chrome.deb
+    && rm google-chrome.deb \
+    # Create a symlink so that the chrome binary is available as "google-chrome"
+    && ln -s /opt/google/chrome/google-chrome /usr/bin/google-chrome
 
 # (Optional Debug Step: Verify Chrome is installed)
 RUN which google-chrome && google-chrome --version
@@ -38,7 +40,7 @@ RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\
     && chmod +x /usr/local/bin/chromedriver \
     && rm chromedriver_linux64.zip
 
-# Update PATH environment variable
+# Update PATH environment variable (if needed)
 ENV PATH="/usr/local/bin:${PATH}"
 
 # Set the working directory
