@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libu2f-udev \
     xvfb \
+    libvulkan1 \ 
+    xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Google Chrome
