@@ -24,25 +24,31 @@ RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrom
     && dpkg -i google-chrome.deb || apt-get -fy install \
     && rm google-chrome.deb
 
-# Install ChromeDriver by using google-chrome-stable to extract the version
-RUN CHROME_VERSION=$(google-chrome-stable --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
-    && CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION) \
-    && wget -q https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip \
+# (Optional Debug Step: Verify Chrome is installed)
+# RUN which google-chrome && google-chrome --version
+
+# Install ChromeDriver matching the installed Chrome version
+RUN CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+') \
+    && echo "Detected Chrome version: $CHROME_VERSION" \
+    && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") \
+    && echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION" \
+    && wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" \
     && unzip chromedriver_linux64.zip \
     && mv chromedriver /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
     && rm chromedriver_linux64.zip
 
-# Set environment variables
+# Update PATH environment variable
 ENV PATH="/usr/local/bin:${PATH}"
 
-# Set work directory
+# Set the working directory
 WORKDIR /app
 
-# Copy files and install Python dependencies
+# Copy the requirements file and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the application code
 COPY . .
 
 # Start the FastAPI server using uvicorn
